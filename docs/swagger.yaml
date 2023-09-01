@@ -1,5 +1,34 @@
 definitions:
-  api.UserSwaggo:
+  model.Contact:
+    properties:
+      emails:
+        items:
+          type: string
+        type: array
+      phoneNumbers:
+        items:
+          type: string
+        type: array
+      primaryContactId:
+        type: integer
+      secondaryContactIds:
+        items:
+          type: integer
+        type: array
+    type: object
+  model.IdentityRequest:
+    properties:
+      email:
+        type: string
+      phoneNumber:
+        type: string
+    type: object
+  model.IdentityResponse:
+    properties:
+      contact:
+        $ref: '#/definitions/model.Contact'
+    type: object
+  model.UserSwaggo:
     properties:
       created_at:
         type: string
@@ -25,22 +54,23 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create a new user with the provided data
+      description: This endpoint is used to return data related to email or phone
+        number supplied
       parameters:
-      - description: User object
+      - description: enter email and phone number
         in: body
         name: user
         required: true
         schema:
-          $ref: '#/definitions/api.UserSwaggo'
+          $ref: '#/definitions/model.IdentityRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.UserSwaggo'
-      summary: Create a new user
+            $ref: '#/definitions/model.IdentityResponse'
+      summary: Return user data
   /users/update:
     put:
       consumes:
@@ -52,7 +82,7 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/api.UserSwaggo'
+          $ref: '#/definitions/model.UserSwaggo'
       produces:
       - application/json
       responses:

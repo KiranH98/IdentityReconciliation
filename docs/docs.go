@@ -18,22 +18,22 @@ const docTemplate = `{
     "paths": {
         "/users/create": {
             "post": {
-                "description": "Create a new user with the provided data",
+                "description": "This endpoint is used to return data related to email or phone number supplied",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Create a new user",
+                "summary": "Return user data",
                 "parameters": [
                     {
-                        "description": "User object",
+                        "description": "enter email and phone number",
                         "name": "user",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.UserSwaggo"
+                            "$ref": "#/definitions/model.IdentityRequest"
                         }
                     }
                 ],
@@ -41,7 +41,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.UserSwaggo"
+                            "$ref": "#/definitions/model.IdentityResponse"
                         }
                     }
                 }
@@ -64,7 +64,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.UserSwaggo"
+                            "$ref": "#/definitions/model.UserSwaggo"
                         }
                     }
                 ],
@@ -77,7 +77,52 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "api.UserSwaggo": {
+        "model.Contact": {
+            "type": "object",
+            "properties": {
+                "emails": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "phoneNumbers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "primaryContactId": {
+                    "type": "integer"
+                },
+                "secondaryContactIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "model.IdentityRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "phoneNumber": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.IdentityResponse": {
+            "type": "object",
+            "properties": {
+                "contact": {
+                    "$ref": "#/definitions/model.Contact"
+                }
+            }
+        },
+        "model.UserSwaggo": {
             "type": "object",
             "properties": {
                 "created_at": {
