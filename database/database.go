@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"identityreconciliation/model"
 	"reflect"
 	"strings"
 	"time"
@@ -107,4 +108,55 @@ func getFieldType(t reflect.Type) string {
 		}
 	}
 	return ""
+}
+
+// GetUsers retrieves users from the database based on the provided IdentityRequest.
+func (DB *DataBase) GetUsers(request model.IdentityRequest) ([]model.User, error) {
+	var result []model.User
+
+	// creating the sql query to be executed
+	query := "SELECT * FROM users WHERE ("
+	args := []interface{}{}
+
+	if request.Email != "" {
+		query += " email = ?"
+		args = append(args, request.Email)
+	}
+
+	if request.PhoneNumber != "" {
+		if len(args) > 0 && request.Email != "" {
+			query += " AND"
+		}
+		query += " phoneNumber = ?"
+		args = append(args, request.PhoneNumber)
+	}
+
+	query += ")"
+
+	// Execute the SQL query
+	rows, err := DB.db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Iterate through the rows and scan into User structs
+	for rows.Next() {
+		var user model.User
+		if err := rows.Scan(&user.ID, &user.Email, &user.PhoneNumber); err != nil {
+			return nil, err
+		}
+		result = append(result, user)
+	}
+
+	// Check if no rows were found, and return an empty slice
+	if len(result) == 0 {
+		return []model.User{}, nil
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
