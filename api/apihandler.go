@@ -13,13 +13,24 @@ type API struct {
 	DB *db.DataBase
 }
 
+type UserSwaggo struct {
+	ID             int        `db:"id" json:"id"`
+	PhoneNumber    string     `db:"phone_number" json:"phone_number"`
+	Email          string     `db:"email" json:"email"`
+	LinkedID       *int       `db:"linked_id" json:"linked_id"`
+	LinkPrecedence string     `db:"link_precedence" json:"link_precedence"`
+	CreatedAt      time.Time  `db:"created_at" json:"created_at"`
+	UpdatedAt      time.Time  `db:"updated_at" json:"updated_at"`
+	DeletedAt      *time.Time `db:"deleted_at" json:"deleted_at"`
+}
+
 // CreateUser creates a new user.
 // @Summary Create a new user
 // @Description Create a new user with the provided data
 // @Accept json
 // @Produce json
-// @Param user body User true "User object"
-// @Success 200 {object} User
+// @Param user body UserSwaggo true "User object"
+// @Success 200 {object} UserSwaggo
 // @Router /users/create [post]
 func (api *API) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user model.User
@@ -52,7 +63,7 @@ func (api *API) CreateUser(w http.ResponseWriter, r *http.Request) {
 // @Description Update an existing user with the provided data
 // @Accept json
 // @Produce json
-// @Param user body User true "User object"
+// @Param user body UserSwaggo true "User object"
 // @Success 200
 // @Router /users/update [put]
 func (api *API) UpdateUser(w http.ResponseWriter, r *http.Request) {
@@ -77,12 +88,10 @@ func (api *API) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-// ReadUsers returns a list of all users.
-// @Summary Get all users
-// @Description Retrieve a list of all users
-// @Produce json
-// @Success 200 {array} User
-// @Router /users [get]
+func (api *API) Identity(w http.ResponseWriter, r *http.Request) {
+
+}
+
 /* func (api *API) ReadUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := api.DB.GetUsers()
 	if err != nil {
@@ -95,12 +104,6 @@ func (api *API) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(users)
 } */
 
-// DeleteUser deletes an existing user.
-// @Summary Delete a user
-// @Description Delete an existing user with the provided ID
-// @Param id path int true "User ID"
-// @Success 200
-// @Router /users/delete/{id} [delete]
 /* func (api *API) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	// Parse the ID from the URL path
 	id := r.URL.Path[len("/users/delete/"):]
