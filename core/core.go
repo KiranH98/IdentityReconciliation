@@ -51,6 +51,8 @@ func (c *Core) run() {
 	r.HandleFunc("/users/update", c.API.UpdateUser).Methods("PUT")
 	//r.HandleFunc("/users/delete", c.API.DeleteUser).Methods("DELETE")
 	r.HandleFunc("/identity", c.API.Identity).Methods("POST")
+	// Serve Swagger UI at /swagger/
+	r.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", http.FileServer(http.Dir("./docs"))))
 
 	// Use the gorilla/mux router
 	http.Handle("/", r)
