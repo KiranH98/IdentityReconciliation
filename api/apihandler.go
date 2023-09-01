@@ -88,6 +88,28 @@ func (api *API) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+type IdentiteyRequest struct {
+	Email       string `json:"email"`
+	PhoneNumber string `json:"phoneNumber"`
+}
+
+type IdentityResponse struct {
+	Contact struct {
+		PrimaryContactID    int      `json:"primaryContactId"`
+		Emails              []string `json:"emails"`
+		PhoneNumbers        []string `json:"phoneNumbers"`
+		SecondaryContactIDs []int    `json:"secondaryContactIds"`
+	} `json:"contact"`
+}
+
+// Identity Return user data
+// @Summary Return user data
+// @Description This endpoint is used to return data related to email or phone number supplied
+// @Accept json
+// @Produce json
+// @Param user body IdentiteyRequest true "enter email and phone number"
+// @Success 200 {object} IdentityResponse
+// @Router /users/create [post]
 func (api *API) Identity(w http.ResponseWriter, r *http.Request) {
 
 }
