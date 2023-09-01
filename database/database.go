@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"reflect"
+	"strings"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -15,6 +16,7 @@ type DataBase struct {
 
 // InitDB initializes the database connection.
 func (DB *DataBase) InitDB(dbName string) error {
+
 	connString := fmt.Sprintf("file:%s?cache=shared&mode=rwc", dbName)
 	database, err := sql.Open("sqlite3", connString)
 	if err != nil {
@@ -36,6 +38,9 @@ func (DB *DataBase) CloseDB() {
 // CreateTable creates a table in the database based on the struct definition.
 func (DB *DataBase) CreateTable(data interface{}) error {
 	query := generateCreateTableQuery(data)
+	if query == "" {
+		return fmt.Errorf("failed to generate create table query")
+	}
 	_, err := DB.db.Exec(query)
 	if err != nil {
 		return fmt.Errorf("failed to create table: %v", err)
@@ -60,6 +65,10 @@ func generateCreateTableQuery(data interface{}) string {
 // getTableName gets the table name from the struct definition.
 func getTableName(data interface{}) string {
 	structName := fmt.Sprintf("%T", data)
+	lastDotIndex := strings.LastIndex(structName, ".")
+	if lastDotIndex != -1 {
+		structName = structName[lastDotIndex+1:]
+	}
 	return structName
 }
 
