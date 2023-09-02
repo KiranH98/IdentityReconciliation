@@ -85,8 +85,8 @@ func (api *API) UpdateUser(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param user body model.IdentityRequest true "enter email and phone number"
 // @Success 200 {object} model.IdentityResponse
-// @Router /users/create [post]
-func (api *API) Identity(w http.ResponseWriter, r *http.Request) {
+// @Router /identify [post]
+func (api *API) Identify(w http.ResponseWriter, r *http.Request) {
 	// Parse the JSON request
 	var request model.IdentityRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
