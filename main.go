@@ -1,15 +1,15 @@
 package main
 
 import (
-	"identityreconciliation/api"
 	"identityreconciliation/core"
-	db "identityreconciliation/database"
+	"identityreconciliation/repository"
+	"identityreconciliation/service"
 )
 
 func main() {
-	db := &db.DataBase{}
-	apiHandler := &api.API{}
+	storage := &repository.Repository{}
+	service := &service.Service{}
 
-	newCoreService := core.NewCoreService(db, apiHandler)
+	newCoreService := core.NewCoreService(storage, service)
 	newCoreService.CallRun()
 }
