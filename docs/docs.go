@@ -46,65 +46,6 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/users/create": {
-            "post": {
-                "description": "Create a new user with the provided data",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Create a new user",
-                "parameters": [
-                    {
-                        "description": "User object",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.UserSwaggo"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.UserSwaggo"
-                        }
-                    }
-                }
-            }
-        },
-        "/users/update": {
-            "put": {
-                "description": "Update an existing user with the provided data",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Update an existing user",
-                "parameters": [
-                    {
-                        "description": "User object",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.UserSwaggo"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -150,35 +91,6 @@ const docTemplate = `{
             "properties": {
                 "contact": {
                     "$ref": "#/definitions/model.Contact"
-                }
-            }
-        },
-        "model.UserSwaggo": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "deleted_at": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "link_precedence": {
-                    "type": "string"
-                },
-                "linked_id": {
-                    "type": "integer"
-                },
-                "phone_number": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
                 }
             }
         }

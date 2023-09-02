@@ -28,25 +28,6 @@ definitions:
       contact:
         $ref: '#/definitions/model.Contact'
     type: object
-  model.UserSwaggo:
-    properties:
-      created_at:
-        type: string
-      deleted_at:
-        type: string
-      email:
-        type: string
-      id:
-        type: integer
-      link_precedence:
-        type: string
-      linked_id:
-        type: integer
-      phone_number:
-        type: string
-      updated_at:
-        type: string
-    type: object
 info:
   contact: {}
 paths:
@@ -71,42 +52,4 @@ paths:
           schema:
             $ref: '#/definitions/model.IdentityResponse'
       summary: Return user data
-  /users/create:
-    post:
-      consumes:
-      - application/json
-      description: Create a new user with the provided data
-      parameters:
-      - description: User object
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/model.UserSwaggo'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.UserSwaggo'
-      summary: Create a new user
-  /users/update:
-    put:
-      consumes:
-      - application/json
-      description: Update an existing user with the provided data
-      parameters:
-      - description: User object
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/model.UserSwaggo'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-      summary: Update an existing user
 swagger: "2.0"
