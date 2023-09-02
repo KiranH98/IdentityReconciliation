@@ -24,7 +24,6 @@ func (s *Service) Identify(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
 	//get users from db based on identity request in put
 
 	users, err := s.storage.GetUsers(request)

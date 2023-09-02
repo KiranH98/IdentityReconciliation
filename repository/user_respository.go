@@ -10,25 +10,25 @@ func (repository *Repository) GetUsers(request model.IdentityRequest) ([]model.U
 	var result []model.User
 
 	// creating the sql query to be executed
-	query := "SELECT * FROM users WHERE ("
+	query := "SELECT * FROM user WHERE "
 	args := []interface{}{}
 
-	if request.Email != "" {
+	if request.Email != "" && request.Email != "null" {
 		query += " email = ?"
 		args = append(args, request.Email)
 	}
 
-	if request.PhoneNumber != "" {
+	if request.PhoneNumber != "" && request.PhoneNumber != "null" {
 		if len(args) > 0 && request.Email != "" {
 			query += " AND"
 		}
-		query += " phoneNumber = ?"
+		query += " phone_number = ?"
 		args = append(args, request.PhoneNumber)
 	}
 
-	query += ")"
+	repository.log.Printf("Query: %s, Args: %v\n", query, args)
 
-	// Execute the SQL query
+	// Execute the SQL query with the args slice
 	rows, err := repository.db.Query(query, args...)
 	if err != nil {
 		return nil, err
@@ -38,7 +38,7 @@ func (repository *Repository) GetUsers(request model.IdentityRequest) ([]model.U
 	// Iterate through the rows and scan into User structs
 	for rows.Next() {
 		var user model.User
-		if err := rows.Scan(&user.ID, &user.Email, &user.PhoneNumber); err != nil {
+		if err := rows.Scan(&user.ID, &user.PhoneNumber, &user.Email, &user.LinkedID, &user.LinkPrecedence, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt); err != nil {
 			return nil, err
 		}
 		result = append(result, user)
@@ -46,6 +46,7 @@ func (repository *Repository) GetUsers(request model.IdentityRequest) ([]model.U
 
 	// Check if no rows were found, and return an empty slice
 	if len(result) == 0 {
+		repository.log.Println("no records found")
 		return []model.User{}, nil
 	}
 
