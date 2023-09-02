@@ -50,7 +50,7 @@ definitions:
 info:
   contact: {}
 paths:
-  /users/create:
+  /identify:
     post:
       consumes:
       - application/json
@@ -71,6 +71,26 @@ paths:
           schema:
             $ref: '#/definitions/model.IdentityResponse'
       summary: Return user data
+  /users/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the provided data
+      parameters:
+      - description: User object
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserSwaggo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.UserSwaggo'
+      summary: Create a new user
   /users/update:
     put:
       consumes:
