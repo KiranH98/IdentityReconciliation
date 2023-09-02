@@ -11,7 +11,7 @@ type Service struct {
 	log     *log.Logger
 }
 
-func newService(storage *repository.Repository) *Service {
+func NewService(storage *repository.Repository) *Service {
 	return &Service{
 		storage: storage,
 		log:     log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lmicroseconds|log.Llongfile),
