@@ -12,13 +12,13 @@ import (
 // @Description This endpoint is used to return data related to email or phone number supplied
 // @Accept json
 // @Produce json
-// @Param user body model.IdentityRequest true "enter email and phone number"
-// @Success 200 {object} model.IdentityResponse
+// @Param user body model.IdentifyRequest true "enter email and phone number"
+// @Success 200 {object} model.IdentifyResponse
 // @Router /identify [post]
 func (s *Service) Identify(w http.ResponseWriter, r *http.Request) {
 	log.Println("Incoming request")
 	// Parse the JSON request
-	var request model.IdentityRequest
+	var request model.IdentifyRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		s.log.Fatal("Error occured while parsing input request")
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -36,6 +36,7 @@ func (s *Service) Identify(w http.ResponseWriter, r *http.Request) {
 		s.log.Println("No entries in DB for the given details")
 		s.log.Println("Creating entry in to the database")
 		//todo addusers
+		s.InsertContact(request)
 	}
 
 	contact := &model.Contact{
@@ -45,7 +46,7 @@ func (s *Service) Identify(w http.ResponseWriter, r *http.Request) {
 		SecondaryContactIDs: getSecondaryContactIDs(users),
 	}
 
-	identityResp := &model.IdentityResponse{
+	identityResp := &model.IdentifyResponse{
 		Contact: *contact,
 	}
 
@@ -56,6 +57,10 @@ func (s *Service) Identify(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func (s *Service) InsertContact(model.IdentifyRequest) error {
+	return nil
 }
 
 func getEmails(users []model.User) []string {

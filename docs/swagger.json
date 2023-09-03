@@ -21,7 +21,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.IdentityRequest"
+                            "$ref": "#/definitions/model.IdentifyRequest"
                         }
                     }
                 ],
@@ -29,7 +29,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.IdentityResponse"
+                            "$ref": "#/definitions/model.IdentifyResponse"
                         }
                     }
                 }
@@ -63,7 +63,7 @@
                 }
             }
         },
-        "model.IdentityRequest": {
+        "model.IdentifyRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -74,7 +74,7 @@
                 }
             }
         },
-        "model.IdentityResponse": {
+        "model.IdentifyResponse": {
             "type": "object",
             "properties": {
                 "contact": {

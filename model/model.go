@@ -17,12 +17,12 @@ type User struct {
 	DeletedAt      sql.NullTime  `db:"deleted_at" json:"deleted_at"`
 }
 
-type IdentityRequest struct {
+type IdentifyRequest struct {
 	Email       string `json:"email"`
 	PhoneNumber string `json:"phoneNumber"`
 }
 
-type IdentityResponse struct {
+type IdentifyResponse struct {
 	Contact Contact `json:"contact"`
 }
 

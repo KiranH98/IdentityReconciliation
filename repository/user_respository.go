@@ -6,7 +6,7 @@ import (
 )
 
 // GetUsers retrieves users from the database based on the provided IdentityRequest.
-func (repository *Repository) GetUsers(request model.IdentityRequest) ([]model.User, error) {
+func (repository *Repository) GetUsers(request model.IdentifyRequest) ([]model.User, error) {
 	var result []model.User
 
 	// creating the sql query to be executed

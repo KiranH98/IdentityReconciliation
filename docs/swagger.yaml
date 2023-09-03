@@ -16,14 +16,14 @@ definitions:
           type: integer
         type: array
     type: object
-  model.IdentityRequest:
+  model.IdentifyRequest:
     properties:
       email:
         type: string
       phoneNumber:
         type: string
     type: object
-  model.IdentityResponse:
+  model.IdentifyResponse:
     properties:
       contact:
         $ref: '#/definitions/model.Contact'
@@ -43,13 +43,13 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/model.IdentityRequest'
+          $ref: '#/definitions/model.IdentifyRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.IdentityResponse'
+            $ref: '#/definitions/model.IdentifyResponse'
       summary: Return user data
 swagger: "2.0"

@@ -33,7 +33,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.IdentityRequest"
+                            "$ref": "#/definitions/model.IdentifyRequest"
                         }
                     }
                 ],
@@ -41,7 +41,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.IdentityResponse"
+                            "$ref": "#/definitions/model.IdentifyResponse"
                         }
                     }
                 }
@@ -75,7 +75,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.IdentityRequest": {
+        "model.IdentifyRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -86,7 +86,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.IdentityResponse": {
+        "model.IdentifyResponse": {
             "type": "object",
             "properties": {
                 "contact": {
