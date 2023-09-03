@@ -7,6 +7,11 @@ import (
 	"net/http"
 )
 
+const (
+	Primary   = "primary"
+	Secondary = "secondary"
+)
+
 // Identity Return user data
 // @Summary Return user data
 // @Description This endpoint is used to return data related to email or phone number supplied
@@ -59,7 +64,13 @@ func (s *Service) Identify(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Service) InsertContact(model.IdentifyRequest) error {
+func (s *Service) InsertContact(req model.IdentifyRequest) error {
+	newContact := &model.Contact{
+		PhoneNumber:    req.PhoneNumber,
+		Email:          req.Email,
+		LinkPrecedence: Primary,
+	}
+	s.storage.InsertContact(*newContact)
 	return nil
 }
 
