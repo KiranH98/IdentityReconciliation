@@ -46,7 +46,7 @@ func (c *Core) run() {
 	defer c.storage.CloseDB()
 
 	// Create tables based on struct definitions
-	if err := c.storage.CreateTable(model.User{}); err != nil {
+	if err := c.storage.CreateTable(model.Contact{}); err != nil {
 		c.log.Fatalf("failed to create table: %v", err)
 	}
 

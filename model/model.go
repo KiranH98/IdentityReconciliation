@@ -6,7 +6,7 @@ import (
 )
 
 // Struct to define the columns for the User Details Table
-type User struct {
+type Contact struct {
 	ID             int           `db:"id" json:"id"`
 	PhoneNumber    string        `db:"phone_number" json:"phone_number"`
 	Email          string        `db:"email" json:"email"`
@@ -23,10 +23,10 @@ type IdentifyRequest struct {
 }
 
 type IdentifyResponse struct {
-	Contact Contact `json:"contact"`
+	Contact ContactResponse `json:"contact"`
 }
 
-type Contact struct {
+type ContactResponse struct {
 	PrimaryContactID    int      `json:"primaryContactId"`
 	Emails              []string `json:"emails"`
 	PhoneNumbers        []string `json:"phoneNumbers"`

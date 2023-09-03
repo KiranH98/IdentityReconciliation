@@ -26,7 +26,7 @@ func (s *Service) Identify(w http.ResponseWriter, r *http.Request) {
 	}
 	//get users from db based on identity request in put
 
-	users, err := s.storage.GetUsers(request)
+	users, err := s.storage.GetContacts(request)
 	if err != nil {
 		s.log.Fatal("error occured while fetching details drom DB", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -39,7 +39,7 @@ func (s *Service) Identify(w http.ResponseWriter, r *http.Request) {
 		s.InsertContact(request)
 	}
 
-	contact := &model.Contact{
+	contact := &model.ContactResponse{
 		PrimaryContactID:    getPrimaryID(users),
 		Emails:              getEmails(users),
 		PhoneNumbers:        getPhoneNumbers(users),
@@ -63,10 +63,10 @@ func (s *Service) InsertContact(model.IdentifyRequest) error {
 	return nil
 }
 
-func getEmails(users []model.User) []string {
+func getEmails(contacts []model.Contact) []string {
 	var emails []string
-	for _, user := range users {
-		emails = append(emails, user.Email)
+	for _, contact := range contacts {
+		emails = append(emails, contact.Email)
 	}
 	uniqueEmails, ok := RemoveDuplicates(emails).([]string)
 	if !ok {
@@ -75,10 +75,10 @@ func getEmails(users []model.User) []string {
 	return uniqueEmails
 }
 
-func getPhoneNumbers(users []model.User) []string {
+func getPhoneNumbers(contacts []model.Contact) []string {
 	var phoneNumbers []string
-	for _, user := range users {
-		phoneNumbers = append(phoneNumbers, user.PhoneNumber)
+	for _, contact := range contacts {
+		phoneNumbers = append(phoneNumbers, contact.PhoneNumber)
 	}
 	uniquePhoneNumbers, ok := RemoveDuplicates(phoneNumbers).([]string)
 	if !ok {
@@ -87,11 +87,11 @@ func getPhoneNumbers(users []model.User) []string {
 	return uniquePhoneNumbers
 }
 
-func getSecondaryContactIDs(users []model.User) []int {
+func getSecondaryContactIDs(Contacts []model.Contact) []int {
 	var secondaryContactIDs []int
-	for _, user := range users {
-		if user.LinkPrecedence == "secondary" {
-			secondaryContactIDs = append(secondaryContactIDs, user.ID)
+	for _, contact := range Contacts {
+		if contact.LinkPrecedence == "secondary" {
+			secondaryContactIDs = append(secondaryContactIDs, contact.ID)
 		}
 	}
 	uniqueSecondaryIDs, ok := RemoveDuplicates(secondaryContactIDs).([]int)
@@ -101,11 +101,11 @@ func getSecondaryContactIDs(users []model.User) []int {
 	return uniqueSecondaryIDs
 }
 
-func getPrimaryID(users []model.User) int {
+func getPrimaryID(Contacts []model.Contact) int {
 	var primaryID int
-	for _, user := range users {
-		if user.LinkPrecedence == "primary" {
-			primaryID = user.ID
+	for _, contact := range Contacts {
+		if contact.LinkPrecedence == "primary" {
+			primaryID = contact.ID
 		}
 	}
 	return primaryID
