@@ -10,48 +10,56 @@ func (repository *Repository) GetUsers(request model.IdentityRequest) ([]model.U
 	var result []model.User
 
 	// creating the sql query to be executed
-	query := "SELECT * FROM user WHERE "
-	args := []interface{}{}
+	queries := []string{}
+	args := [][]interface{}{}
 
 	if request.Email != "" && request.Email != "null" {
-		query += " email = ?"
-		args = append(args, request.Email)
+		// Query for email only
+		queries = append(queries, "SELECT * FROM user WHERE email = ?")
+		args = append(args, []interface{}{request.Email})
 	}
 
 	if request.PhoneNumber != "" && request.PhoneNumber != "null" {
-		if len(args) > 0 && request.Email != "" {
-			query += " AND"
-		}
-		query += " phone_number = ?"
-		args = append(args, request.PhoneNumber)
+		// Query for phone number only
+		queries = append(queries, "SELECT * FROM user WHERE phone_number = ?")
+		args = append(args, []interface{}{request.PhoneNumber})
 	}
 
-	repository.log.Printf("Query: %s, Args: %v\n", query, args)
-
-	// Execute the SQL query with the args slice
-	rows, err := repository.db.Query(query, args...)
-	if err != nil {
-		return nil, err
+	if request.Email != "" && request.Email != "null" && request.PhoneNumber != "" && request.PhoneNumber != "null" {
+		// Query for both email and phone number
+		queries = append(queries, "SELECT * FROM user WHERE email = ? AND phone_number = ?")
+		args = append(args, []interface{}{request.Email, request.PhoneNumber})
 	}
-	defer rows.Close()
 
-	// Iterate through the rows and scan into User structs
-	for rows.Next() {
-		var user model.User
-		if err := rows.Scan(&user.ID, &user.PhoneNumber, &user.Email, &user.LinkedID, &user.LinkPrecedence, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt); err != nil {
+	repository.log.Printf("Query: %v, Args: %v\n", queries, args)
+
+	//iterate over the differnt queries
+	for i, query := range queries {
+		// Execute the SQL query with the args slice
+		rows, err := repository.db.Query(query, args[i]...)
+		if err != nil {
 			return nil, err
 		}
-		result = append(result, user)
-	}
+		defer rows.Close()
 
-	// Check if no rows were found, and return an empty slice
-	if len(result) == 0 {
-		repository.log.Println("no records found")
-		return []model.User{}, nil
-	}
+		// Iterate through the rows and scan into User structs
+		for rows.Next() {
+			var user model.User
+			if err := rows.Scan(&user.ID, &user.PhoneNumber, &user.Email, &user.LinkedID, &user.LinkPrecedence, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt); err != nil {
+				return nil, err
+			}
+			result = append(result, user)
+		}
 
-	if err := rows.Err(); err != nil {
-		return nil, err
+		// Check if no rows were found, and return an empty slice
+		if len(result) == 0 {
+			repository.log.Println("no records found")
+			return []model.User{}, nil
+		}
+
+		if err := rows.Err(); err != nil {
+			return nil, err
+		}
 	}
 
 	return result, nil
