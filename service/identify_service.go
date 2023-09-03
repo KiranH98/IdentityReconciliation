@@ -63,7 +63,11 @@ func getEmails(users []model.User) []string {
 	for _, user := range users {
 		emails = append(emails, user.Email)
 	}
-	return emails
+	uniqueEmails, ok := RemoveDuplicates(emails).([]string)
+	if !ok {
+		return nil
+	}
+	return uniqueEmails
 }
 
 func getPhoneNumbers(users []model.User) []string {
@@ -71,7 +75,11 @@ func getPhoneNumbers(users []model.User) []string {
 	for _, user := range users {
 		phoneNumbers = append(phoneNumbers, user.PhoneNumber)
 	}
-	return phoneNumbers
+	uniquePhoneNumbers, ok := RemoveDuplicates(phoneNumbers).([]string)
+	if !ok {
+		return nil
+	}
+	return uniquePhoneNumbers
 }
 
 func getSecondaryContactIDs(users []model.User) []int {
@@ -81,7 +89,11 @@ func getSecondaryContactIDs(users []model.User) []int {
 			secondaryContactIDs = append(secondaryContactIDs, user.ID)
 		}
 	}
-	return secondaryContactIDs
+	uniqueSecondaryIDs, ok := RemoveDuplicates(secondaryContactIDs).([]int)
+	if !ok {
+		return nil
+	}
+	return uniqueSecondaryIDs
 }
 
 func getPrimaryID(users []model.User) int {
@@ -92,4 +104,37 @@ func getPrimaryID(users []model.User) int {
 		}
 	}
 	return primaryID
+}
+
+func RemoveDuplicates(input interface{}) interface{} {
+	switch input := input.(type) {
+	case []string:
+		uniqueMap := make(map[string]struct{})
+		var result []string
+
+		for _, str := range input {
+			if _, found := uniqueMap[str]; !found {
+				uniqueMap[str] = struct{}{}
+				result = append(result, str)
+			}
+		}
+
+		return result
+
+	case []int:
+		uniqueMap := make(map[int]struct{})
+		var result []int
+
+		for _, num := range input {
+			if _, found := uniqueMap[num]; !found {
+				uniqueMap[num] = struct{}{}
+				result = append(result, num)
+			}
+		}
+
+		return result
+
+	default:
+		return nil
+	}
 }
