@@ -73,10 +73,13 @@ func generateCreateTableQuery(data interface{}) string {
 		field := fields.Field(i)
 		dbTag := field.Tag.Get("db")
 		fieldType := getFieldType(field.Type)
-		createTableSQL += dbTag + " " + fieldType + ","
+		if dbTag == "id" {
+			createTableSQL += dbTag + " " + fieldType + " PRIMARY KEY AUTOINCREMENT,"
+		} else {
+			createTableSQL += dbTag + " " + fieldType + ","
+		}
 	}
 	createTableSQL = strings.TrimSuffix(createTableSQL, ",") + ");"
-
 	return createTableSQL
 }
 
