@@ -15,19 +15,19 @@ func (repository *Repository) GetContacts(request model.IdentifyRequest) ([]mode
 
 	if request.Email != "" && request.Email != "null" {
 		// Query for email only
-		queries = append(queries, "SELECT * FROM user WHERE email = ?")
+		queries = append(queries, "SELECT * FROM contact WHERE email = ?")
 		args = append(args, []interface{}{request.Email})
 	}
 
 	if request.PhoneNumber != "" && request.PhoneNumber != "null" {
 		// Query for phone number only
-		queries = append(queries, "SELECT * FROM user WHERE phone_number = ?")
+		queries = append(queries, "SELECT * FROM contact WHERE phone_number = ?")
 		args = append(args, []interface{}{request.PhoneNumber})
 	}
 
 	if request.Email != "" && request.Email != "null" && request.PhoneNumber != "" && request.PhoneNumber != "null" {
 		// Query for both email and phone number
-		queries = append(queries, "SELECT * FROM user WHERE email = ? AND phone_number = ?")
+		queries = append(queries, "SELECT * FROM contact WHERE email = ? AND phone_number = ?")
 		args = append(args, []interface{}{request.Email, request.PhoneNumber})
 	}
 
@@ -67,7 +67,7 @@ func (repository *Repository) GetContacts(request model.IdentifyRequest) ([]mode
 
 // InsertUser inserts a new user into the database and returns the ID of the created user.
 func (repository *Repository) InsertContact(contact model.Contact) (int, error) {
-	stmt := `INSERT INTO users (phone_number, email, linked_id, link_precedence, created_at, updated_at)
+	stmt := `INSERT INTO contact (phone_number, email, linked_id, link_precedence, created_at, updated_at)
 			VALUES (?, ?, ?, ?, ?, ?)`
 
 	now := time.Now().UTC()
@@ -86,7 +86,7 @@ func (repository *Repository) InsertContact(contact model.Contact) (int, error) 
 
 // UpdateUser updates an existing user in the database.
 func (repository *Repository) UpdateContact(contact model.Contact) error {
-	stmt := `UPDATE users
+	stmt := `UPDATE contact
 			SET phone_number = ?, email = ?, linked_id = ?, link_precedence = ?, updated_at = ?
 			WHERE id = ?`
 
