@@ -29,26 +29,20 @@ func (s *Service) Identify(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	//get users from db based on identity request in put
 
-	users, err := s.storage.GetContacts(request)
+	//get users from db based on identity request
+	contacts, err := s.storage.GetContacts(request)
 	if err != nil {
 		s.log.Fatal("error occured while fetching details drom DB", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	if len(users) == 0 {
-		s.log.Println("No entries in DB for the given details")
-		s.log.Println("Creating entry in to the database")
-		//todo addusers
-		s.InsertContact(request)
-	}
 
 	contact := &model.ContactResponse{
-		PrimaryContactID:    getPrimaryID(users),
-		Emails:              getEmails(users),
-		PhoneNumbers:        getPhoneNumbers(users),
-		SecondaryContactIDs: getSecondaryContactIDs(users),
+		PrimaryContactID:    getPrimaryID(contacts),
+		Emails:              getEmails(contacts),
+		PhoneNumbers:        getPhoneNumbers(contacts),
+		SecondaryContactIDs: getSecondaryContactIDs(contacts),
 	}
 
 	identityResp := &model.IdentifyResponse{
@@ -62,16 +56,6 @@ func (s *Service) Identify(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-}
-
-func (s *Service) InsertContact(req model.IdentifyRequest) error {
-	newContact := &model.Contact{
-		PhoneNumber:    req.PhoneNumber,
-		Email:          req.Email,
-		LinkPrecedence: Primary,
-	}
-	s.storage.InsertContact(*newContact)
-	return nil
 }
 
 func getEmails(contacts []model.Contact) []string {
