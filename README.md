@@ -3,6 +3,11 @@ Bitespeed Backend Task: Identity Reconciliation
 
 The Repo has the code of the task assigned for hiring to the position of Bitespeed Backend developer.
 
+Link to Kiran H resume 
+```
+https://drive.google.com/file/d/1QM_CfB-W6y2j4KnGmEfD6B2_L0ZXC7F2/view?usp=drive_link
+```
+
 Tech stack used
 
 Backend : Golang
