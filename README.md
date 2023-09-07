@@ -30,3 +30,8 @@ docker build -t identity-reconciliation-app .
  docker run -p 8080:8080 identity-reconciliation-app
 ```
 
+4. The application has been added with swagger UI to test out API apart from postman , Link to swagger UI
+```
+http://localhost:8080/swagger/index.html
+```
+
