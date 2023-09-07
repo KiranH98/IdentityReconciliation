@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 	"identityreconciliation/model"
+	"sort"
 	"time"
 )
 
@@ -15,47 +16,72 @@ const (
 func (repository *Repository) GetContacts(request model.IdentifyRequest) ([]model.Contact, error) {
 	var result []model.Contact
 	var existing []model.Contact
-
-	//check if entry exists for email in the incoming request
+	var emailRowsexist, phoneNumberRowsExist bool
+	// Check if entry exists for email in the incoming request
 	if request.Email != "" {
 		emailRows, err := repository.GetContactbyEmail(request.Email)
 		if err != nil {
 			return nil, err
 		}
 		// Iterate through the rows and scan into Contact model
-		for _, contact := range emailRows {
-			existing = append(existing, contact)
+		existing = append(existing, emailRows...)
+		if len(emailRows) != 0 {
+			emailRowsexist = true
+			repository.log.Println("emailRowsexist ", emailRowsexist)
 		}
 	}
 
 	// Query for contacts where phoneNumber matches and no entries for email
-	if len(existing) == 0 && request.PhoneNumber != "" {
+	if request.PhoneNumber != "" {
 		phoneNumberRows, err := repository.GetContactbyPhoneNumber(request.PhoneNumber)
 		if err != nil {
 			return nil, err
 		}
 
 		// Iterate through the rows and scan into Contact structs
-		for _, contact := range phoneNumberRows {
-			existing = append(existing, contact)
+		existing = append(existing, phoneNumberRows...)
+		if len(phoneNumberRows) != 0 {
+			phoneNumberRowsExist = true
+			repository.log.Println("phoneNumberRowsExist ", phoneNumberRowsExist)
 		}
 	}
-
 	// If no rows found, create a new entry in the database
 	if len(existing) == 0 {
 		repository.log.Println("No entries in DB for the given details")
 		repository.log.Println("Creating primary entry in the database")
-		//add a new primary contact entry
+		// Add a new primary contact entry
 		newContact := &model.Contact{
 			PhoneNumber:    request.PhoneNumber,
 			Email:          request.Email,
 			LinkPrecedence: Primary,
 		}
 		repository.InsertContact(*newContact)
+	} else if emailRowsexist && phoneNumberRowsExist {
+		// Sort existing contacts by created_at, oldest first
+		sortedContacts := make([]model.Contact, len(existing))
+		copy(sortedContacts, existing)
+		sort.Slice(sortedContacts, func(i, j int) bool {
+			if (sortedContacts[i].LinkPrecedence == Primary && (sortedContacts[i].Email == request.Email || sortedContacts[i].PhoneNumber == request.PhoneNumber)) && (sortedContacts[j].LinkPrecedence == Primary && (sortedContacts[j].Email == request.Email || sortedContacts[j].PhoneNumber == request.PhoneNumber)) {
+				return sortedContacts[i].CreatedAt.After(sortedContacts[j].CreatedAt)
+			}
+			return false
+		})
+
+		var linkedID sql.NullInt64
+		linkedID.Int64 = int64(sortedContacts[1].ID)
+		linkedID.Valid = true
+
+		updateContact := sortedContacts[0]
+		updateContact.LinkPrecedence = Secondary
+		updateContact.LinkedID = linkedID
+
+		repository.log.Println("unliked Primary contact exists")
+		repository.log.Println("updating latest entry to secondary")
+		repository.UpdateContact(updateContact)
 	} else {
 		for _, contact := range existing {
+			// Check if the current contact matches the request
 			if (request.Email != "" && contact.Email == request.Email) || (request.PhoneNumber != "" && contact.PhoneNumber == request.PhoneNumber) {
-
 				// If rows are found, create a "secondary" Contact entry with the new information
 				repository.log.Println("Matching entry found in the database")
 				repository.log.Println("Creating secondary entry in the database")
@@ -66,6 +92,7 @@ func (repository *Repository) GetContacts(request model.IdentifyRequest) ([]mode
 					if contact.LinkPrecedence == Primary {
 						primaryID.Int64 = int64(contact.ID)
 						primaryID.Valid = true
+						break
 					}
 				}
 				newSecondaryContact := model.Contact{
@@ -79,7 +106,7 @@ func (repository *Repository) GetContacts(request model.IdentifyRequest) ([]mode
 		}
 	}
 
-	// creating the sql query to be executed
+	// Create queries based on email and phoneNumber
 	queries := []string{}
 	args := [][]interface{}{}
 
@@ -95,7 +122,7 @@ func (repository *Repository) GetContacts(request model.IdentifyRequest) ([]mode
 		args = append(args, []interface{}{request.PhoneNumber})
 	}
 
-	//iterate over the differnt queries
+	// Iterate over the different queries
 	for i, query := range queries {
 		// Execute the SQL query with the args slice
 		rows, err := repository.db.Query(query, args[i]...)
