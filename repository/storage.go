@@ -63,9 +63,6 @@ func generateCreateTableQuery(data interface{}) string {
 	// Extract the table name from the struct
 	tableName := getTableName(data)
 
-	// Get the fields and their types from the struct
-	//fields := getStructFields(data)
-
 	// Generate SQL CREATE TABLE statement
 	createTableSQL := "CREATE TABLE IF NOT EXISTS " + tableName + " ("
 	fields := reflect.TypeOf(data)
@@ -91,23 +88,6 @@ func getTableName(data interface{}) string {
 		structName = structName[lastDotIndex+1:]
 	}
 	return strings.ToLower(structName)
-}
-
-// getStructFields gets the fields and their types from the model definition.
-func getStructFields(data interface{}) string {
-	fields := ""
-	structType := reflect.TypeOf(data)
-	numFields := structType.NumField()
-
-	for i := 0; i < numFields; i++ {
-		field := structType.Field(i)
-		if fields != "" {
-			fields += ", "
-		}
-		fields += field.Name + " " + getFieldType(field.Type)
-	}
-
-	return fields
 }
 
 // getFieldType returns the corresponding SQL type based on the Go type.
